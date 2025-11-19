@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Information - Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .header h1 {
+            color: #333;
+            margin: 0;
+        }
+        .header a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-group .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .submit-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background: #5568d3;
+        }
+        .flash-messages {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        .flash-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .preview-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .preview-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .preview-item {
+            margin-bottom: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                {% if site_settings.logo_type == 'image' and site_settings.logo_image_url %}
+                    <div class="logo">
+                        <img src="{{ site_settings.logo_image_url }}" alt="Logo" style="max-width: 120px; max-height: 50px;">
+                    </div>
+                {% else %}
+                    <div class="logo">
+                        <div class="logo-text" style="font-size: 20px; font-weight: 700; color: #667eea; letter-spacing: 1px;">{{ site_settings.logo_text }}</div>
+                    </div>
+                {% endif %}
+                <h1>Contact Information</h1>
+            </div>
+            <a href="{{ url_for('admin_contact') }}">← Back to Messages</a>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="flash-{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST">
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" name="address" value="{{ contact_info.address }}" 
+                       placeholder="1 Tesla Road, Austin, TX 78725, USA">
+            </div>
+            
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ contact_info.email }}" 
+                       placeholder="info@tesla.com">
+            </div>
+            
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" name="phone" value="{{ contact_info.phone }}" 
+                       placeholder="+1 (512) 516-8177">
+            </div>
+            
+            <div class="form-group">
+                <label>Google Maps Embed URL</label>
+                <textarea name="map_url" placeholder="Paste the Google Maps embed iframe src URL here">{{ contact_info.map_url }}</textarea>
+                <div class="help-text" style="margin-top: 10px; padding: 12px; background: #e7f3ff; border-left: 4px solid #667eea; border-radius: 4px;">
+                    <strong>How to get the embed URL:</strong><br>
+                    1. Go to <a href="https://www.google.com/maps" target="_blank">Google Maps</a><br>
+                    2. Search for your location or click on the place<br>
+                    3. Click the <strong>"Share"</strong> button<br>
+                    4. Select the <strong>"Embed a map"</strong> tab<br>
+                    5. Copy the entire <code>src="..."</code> URL from the iframe code<br>
+                    <br>
+                    <strong>Example format:</strong><br>
+                    <code style="font-size: 11px; word-break: break-all;">https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d...!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1...</code>
+                    <br><br>
+                    <strong>⚠️ Important:</strong> You cannot use regular Google Maps place URLs (like the one you tried). You must use the embed URL from the "Embed a map" option.
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">Save Contact Information</button>
+        </form>
+        
+        <div class="preview-section">
+            <h3>Preview:</h3>
+            <div class="preview-item"><strong>Address:</strong> {{ contact_info.address }}</div>
+            <div class="preview-item"><strong>Email:</strong> {{ contact_info.email }}</div>
+            <div class="preview-item"><strong>Phone:</strong> {{ contact_info.phone }}</div>
+        </div>
+    </div>
+</body>
+</html>
+

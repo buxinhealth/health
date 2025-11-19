@@ -1,0 +1,196 @@
+{
+  "index": {
+    "slider_images": [
+      "/static/uploads/Patient_on_Kiosk_Weight_Scale.mp4",
+      "/static/uploads/Speech_Recognition_1_2.mp4",
+      "/static/uploads/Untitled_design_4_2.png",
+      "/static/uploads/Gemini_Generated_Image_wm32wdwm32wdwm32_1_1.png",
+      "/static/uploads/Gemini_Generated_Image_9399z09399z09399_1.png",
+      "/static/uploads/Gemini_Generated_Image_beiq4ubeiq4ubeiq_1.png"
+    ],
+    "title": "Healthcare Robot",
+    "subtitle": "AI-powered healthcare assistance for clinical and public use. <a href=\"#\">Learn More</a>",
+    "specs": [
+      {
+        "value": "24/7",
+        "unit": "hr",
+        "label": "Continuous Monitoring"
+      },
+      {
+        "value": "AI",
+        "unit": "+",
+        "label": "Intelligent Interaction"
+      },
+      {
+        "value": "Real",
+        "unit": "-Time",
+        "label": "Health Assessment"
+      }
+    ],
+    "footer_note": "Bridging gaps in healthcare with affordable, intelligent robotic assistance",
+    "financing": "$1500/robot"
+  },
+  "problem": {
+    "slider_images": [
+      "/static/uploads/1118.mp4",
+      "/static/uploads/11181_1.mp4",
+      "/static/uploads/20251118_1457_Overwhelmed_Hospital_Queue_simple_compose_01kab4h392e0c821xtamx4bs07_1.png"
+    ],
+    "title": "Problem Statements",
+    "subtitle": "Key challenges in healthcare today. <a href=\"#\">Learn More</a>",
+    "items": [
+      {
+        "icon": "📊",
+        "title": "Real-Time Monitoring Gap",
+        "description": "Hospitals lack continuous vitals tracking. Manual checks cause delays and inconsistency."
+      },
+      {
+        "icon": "💰",
+        "title": "High Cost Barrier",
+        "description": "Existing robots cost several lakhs, unaffordable for smaller clinics and public institutions."
+      },
+      {
+        "icon": "🔗",
+        "title": "No Integrated Solution",
+        "description": "Missing device that combines vitals monitoring with AI chatbot for health screening."
+      },
+      {
+        "icon": "👩‍⚕️",
+        "title": "Staff Overload",
+        "description": "Nurses overwhelmed with repetitive tasks, reducing time for critical care."
+      },
+      {
+        "icon": "🏥",
+        "title": "Limited Public Access",
+        "description": "Airports, malls, schools lack accessible health screening tools for emergencies."
+      },
+      {
+        "icon": "🦠",
+        "title": "Infection Risk",
+        "description": "Manual screening requires close contact, increasing infection spread risk."
+      },
+      {
+        "icon": "📱",
+        "title": "No Instant Data Logging",
+        "description": "Traditional systems lack instant alerts and early warning detection capabilities."
+      }
+    ],
+    "footer_note": "Addressing critical gaps in healthcare delivery and accessibility",
+    "financing": "$1500/robot"
+  },
+  "solution": {
+    "slider_images": [
+      "/static/uploads/Speech_Recognition_1_3.mp4",
+      "/static/uploads/Patient_on_Kiosk_Weight_Scale_1.mp4",
+      "/static/uploads/Speech_Recognition_2.jpg"
+    ],
+    "title": "OUR SOLUTION",
+    "subtitle": "<strong>AI-Enabled Medical Assistance Robot</strong>",
+    "description": "We provide an affordable, modular, and intelligent medical robot that combines real-time health monitoring, AI conversation, and automated patient assistance in one system.",
+    "items": [
+      {
+        "icon": "📊",
+        "title": "Real-Time Vitals Monitoring",
+        "description": "Continuously measures temperature, heart rate, SpO₂, weight, and other vitals using integrated sensors, reducing manual workload."
+      },
+      {
+        "icon": "🤖",
+        "title": "AI Medical Chatbot",
+        "description": "The robot can talk to patients, answer basic medical queries, provide health guidance, and collect symptoms through conversation."
+      },
+      {
+        "icon": "📋",
+        "title": "Automated Patient Records",
+        "description": "All vitals and interactions are stored instantly in a digital dashboard for doctors and nurses to access."
+      },
+      {
+        "icon": "👤",
+        "title": "Face Recognition",
+        "description": "Helps track patient history, reduces confusion, and supports smooth hospital workflow."
+      },
+      {
+        "icon": "🔧",
+        "title": "Modular Hardware Design",
+        "description": "Low-cost sensors, camera modules, and microcontrollers make the robot affordable and easy to maintain or upgrade."
+      },
+      {
+        "icon": "🚶",
+        "title": "Mobile Guidance & Assistance",
+        "description": "The robot can guide patients, help them check in, provide directions, or answer common questions—reducing staff workload."
+      },
+      {
+        "icon": "🔒",
+        "title": "Secure Data Processing",
+        "description": "Integrated authentication, encrypted storage, and access control protect patient data."
+      },
+      {
+        "icon": "🌐",
+        "title": "Scalable Beyond Hospitals",
+        "description": "Deployable in schools, colleges, offices, malls, airports, hostels, and elderly care centers for health screening and information services."
+      }
+    ],
+    "footer_note": "One integrated platform for comprehensive healthcare assistance",
+    "financing": "$1500/robot"
+  },
+  "methodology": {
+    "slider_images": [
+      "https://static-assets.tesla.com/configurator/compositor?context=design_studio_2&options=$MT3P2,$PPSW,$W40B,$IBB1&view=INTERIOR&model=m3&size=1920&bkba_opt=2&crop=0,0,0,0&version=v0.1.18-8-ge8075a4202506171",
+      "https://static-assets.tesla.com/configurator/compositor?context=design_studio_2&options=$MT3P2,$PPSW,$W40B,$IBB1&view=EXTERIOR&model=m3&size=1920&bkba_opt=2&crop=0,0,0,0&version=v0.1.18-8-ge8075a4202506171",
+      "https://static-assets.tesla.com/configurator/compositor?context=design_studio_2&options=$MT3P2,$PPSW,$W40B,$IBB1&view=FRONT&model=m3&size=1920&bkba_opt=2&crop=0,0,0,0&version=v0.1.18-8-ge8075a4202506171"
+    ],
+    "title": "METHODOLOGY",
+    "subtitle": "Multi-layered approach combining sensing, processing, AI intelligence, interaction, and data security.",
+    "footer_note": "Integrated multi-layered system for comprehensive healthcare assistance",
+    "financing": "$1500"
+  },
+  "team": {
+    "header_title": "Meet the Team",
+    "header_description": "Meet the passionate experts behind our AI-enabled medical assistance robot. We're dedicated to revolutionizing healthcare through innovation and technology.",
+    "members": [
+      {
+        "name": "Dr. John Smith",
+        "title": "Chief Medical Officer",
+        "bio": "Leading medical strategy and ensuring our solutions meet the highest healthcare standards.",
+        "image_url": "https://via.placeholder.com/140",
+        "linkedin": "https://www.linkedin.com/",
+        "twitter": null
+      },
+      {
+        "name": "Sarah Johnson",
+        "title": "Lead AI Engineer",
+        "bio": "Developing cutting-edge AI algorithms for intelligent patient interaction and medical decision-making.",
+        "image_url": "https://via.placeholder.com/140",
+        "linkedin": "https://www.linkedin.com/",
+        "twitter": null
+      },
+      {
+        "name": "Michael Chen",
+        "title": "Hardware Specialist",
+        "bio": "Designing modular, affordable hardware systems that make advanced medical robotics accessible.",
+        "image_url": "https://via.placeholder.com/140",
+        "linkedin": "https://www.linkedin.com/",
+        "twitter": null
+      },
+      {
+        "name": "Dr. Emily Rodriguez",
+        "title": "Clinical Research Lead",
+        "bio": "Conducting research and validation to ensure our solutions improve patient outcomes and care quality.",
+        "image_url": "https://via.placeholder.com/140",
+        "linkedin": "https://www.linkedin.com/",
+        "twitter": null
+      }
+    ]
+  },
+  "site_settings": {
+    "logo_type": "image",
+    "logo_text": "HEALTHCARE ROBOT",
+    "logo_image_url": "/static/uploads/Untitled_design_3.png",
+    "site_name": "Healthcare Robot"
+  },
+  "contact_info": {
+    "address": "SHARDA UNIVERSITY, Knowledge Park III, Greater Noida, Uttar Pradesh 201310",
+    "email": "abdoukadrjabbi1@gmail.com",
+    "phone": "+919319038312",
+    "map_url": "https://www.google.com/maps?q=Sharda+Launchpad+Federation&output=embed"
+  }
+}

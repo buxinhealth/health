@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Methodology Page</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .logo img {
+            max-width: 120px;
+            max-height: 50px;
+        }
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            letter-spacing: 1px;
+        }
+        .header h1 { 
+            color: #333;
+            margin: 0;
+        }
+        .header a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .image-upload {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .image-upload input {
+            flex: 1;
+        }
+        .upload-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .submit-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .preview-img {
+            max-width: 200px;
+            max-height: 150px;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                {% if site_settings.logo_type == 'image' and site_settings.logo_image_url %}
+                    <div class="logo">
+                        <img src="{{ site_settings.logo_image_url }}" alt="Logo">
+                    </div>
+                {% else %}
+                    <div class="logo">
+                        <div class="logo-text">{{ site_settings.logo_text }}</div>
+                    </div>
+                {% endif %}
+                <h1>Edit Methodology Page</h1>
+            </div>
+            <a href="{{ url_for('admin_dashboard') }}">← Back to Dashboard</a>
+        </div>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" name="title" value="{{ page_data.get('title', '') }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Subtitle (HTML allowed)</label>
+                <textarea name="subtitle">{{ page_data.get('subtitle', '') }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Slider Media (Images or Videos - one URL per line)</label>
+                <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Supports: Images (jpg, png, gif, webp) and Videos (mp4, webm, ogg) or YouTube/Vimeo URLs</p>
+                {% for i in range(10) %}
+                    <div class="image-upload">
+                        <input type="text" name="slider_image_{{ i }}" 
+                               value="{{ page_data.get('slider_images', [])[i] if i < page_data.get('slider_images', [])|length else '' }}" 
+                               placeholder="Image or Video URL {{ i + 1 }}">
+                        <button type="button" class="upload-btn" onclick="uploadImage({{ i }})">Upload</button>
+                    </div>
+                    {% if page_data.get('slider_images', [])[i] %}
+                        {% set media_url = page_data.get('slider_images', [])[i] %}
+                        {% set media_url_lower = media_url.lower() %}
+                        {% if media_url_lower.endswith('.mp4') or media_url_lower.endswith('.webm') or media_url_lower.endswith('.ogg') or media_url_lower.endswith('.mov') or media_url_lower.endswith('.avi') or 'youtube.com' in media_url_lower or 'youtu.be' in media_url_lower or 'vimeo.com' in media_url_lower %}
+                            <video class="preview-img" controls style="max-width: 200px; max-height: 150px; margin-top: 10px; display: block;">
+                                <source src="{{ media_url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        {% else %}
+                            <img src="{{ media_url }}" class="preview-img" alt="Preview" style="margin-top: 10px; display: block;">
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            <div class="form-group">
+                <label>Footer Note</label>
+                <textarea name="footer_note">{{ page_data.get('footer_note', '') }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Financing Amount</label>
+                <input type="text" name="financing" value="{{ page_data.get('financing', '') }}">
+            </div>
+            
+            <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+    </div>
+    
+    <script>
+        function uploadImage(index) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    fetch('{{ url_for("admin_upload") }}', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => Promise.reject(err));
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.url) {
+                            const input = document.querySelector(`input[name="slider_image_${index}"]`);
+                            input.value = data.url;
+                            
+                            // Update preview immediately
+                            const imageUploadDiv = input.closest('.image-upload');
+                            let preview = imageUploadDiv.nextElementSibling;
+                            
+                            // Remove old preview if exists
+                            if (preview && (preview.tagName === 'IMG' || preview.tagName === 'VIDEO')) {
+                                preview.remove();
+                            }
+                            
+                            // Create new preview
+                            const mediaUrl = data.url.toLowerCase();
+                            if (mediaUrl.endsWith('.mp4') || mediaUrl.endsWith('.webm') || mediaUrl.endsWith('.ogg') || 
+                                mediaUrl.endsWith('.mov') || mediaUrl.endsWith('.avi') || 
+                                mediaUrl.includes('youtube.com') || mediaUrl.includes('youtu.be') || mediaUrl.includes('vimeo.com')) {
+                                const video = document.createElement('video');
+                                video.className = 'preview-img';
+                                video.controls = true;
+                                video.style.maxWidth = '200px';
+                                video.style.maxHeight = '150px';
+                                video.style.marginTop = '10px';
+                                video.style.display = 'block';
+                                const source = document.createElement('source');
+                                source.src = data.url;
+                                source.type = 'video/mp4';
+                                video.appendChild(source);
+                                imageUploadDiv.parentNode.insertBefore(video, imageUploadDiv.nextSibling);
+                            } else {
+                                const img = document.createElement('img');
+                                img.src = data.url;
+                                img.className = 'preview-img';
+                                img.alt = 'Preview';
+                                img.style.marginTop = '10px';
+                                img.style.display = 'block';
+                                imageUploadDiv.parentNode.insertBefore(img, imageUploadDiv.nextSibling);
+                            }
+                            
+                            alert('Media uploaded successfully! Don\'t forget to click "Save Changes" to save.');
+                        } else {
+                            alert('Upload failed: ' + (data.error || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        const errorMsg = error.error || error.message || 'Upload failed: ' + error;
+                        alert(errorMsg);
+                        console.error('Upload error:', error);
+                    });
+                }
+            };
+            input.click();
+        }
+    </script>
+</body>
+</html>
+

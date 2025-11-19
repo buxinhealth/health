@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Team | Tesla{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Basic Page Styles */
+    .team-page-container {
+        width: 90%;
+        max-width: 1400px;
+        margin: 3rem auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Header Section */
+    .team-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .team-header h1 {
+        font-size: 3rem;
+        color: #111;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+
+    .team-header p {
+        font-size: 1.15rem;
+        color: #555;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* Team Grid */
+    .team-grid {
+        display: grid;
+        /* Responsive grid: creates columns between 300px and 1fr */
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    /* Team Member Card */
+    .team-card {
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        text-align: center;
+        padding: 2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .team-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .team-card-photo {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: cover; /* Ensures the image covers the area without stretching */
+        margin-bottom: 1.5rem;
+        border: 4px solid #f0f0f0;
+    }
+
+    .team-card-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #222;
+        margin: 0;
+    }
+
+    .team-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #CC0000; /* Tesla-like red accent */
+        margin: 0.25rem 0 1rem 0;
+    }
+
+    .team-card-bio {
+        font-size: 0.95rem;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Social Media Links */
+    .team-card-socials {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .team-card-socials a {
+        display: inline-block;
+        text-decoration: none;
+        color: #333;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .team-card-socials a:hover {
+        background-color: #333;
+        color: #fff;
+        border-color: #333;
+    }
+</style>
+
+<main class="team-page-container">
+    <header class="team-header">
+        <h1>{{ page_data.get('header_title', 'Meet the Team') }}</h1>
+        <p>{{ page_data.get('header_description', 'Meet the passionate experts behind our AI-enabled medical assistance robot. We\'re dedicated to revolutionizing healthcare through innovation and technology.') }}</p>
+    </header>
+
+    <section class="team-grid">
+        {% for member in team %}
+            <article class="team-card">
+                <img src="{{ member.image_url }}" alt="Photo of {{ member.name }}" class="team-card-photo">
+                <h3 class="team-card-name">{{ member.name }}</h3>
+                <p class="team-card-title">{{ member.title }}</p>
+                <p class="team-card-bio">{{ member.bio }}</p>
+                
+                <div class="team-card-socials">
+                    {% if member.linkedin %}
+                        <a href="{{ member.linkedin }}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    {% endif %}
+                    {% if member.twitter %}
+                        <a href="{{ member.twitter }}" target="_blank" rel="noopener noreferrer">Twitter</a>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+</main>
+
+{% endblock %}

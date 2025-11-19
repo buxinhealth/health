@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Methodology | Tesla{% endblock %}
+
+{% block content %}
+    <div class="page-wrapper">
+        <div class="container">
+            <main class="main-content">
+                <div class="image-slider">
+                    <button class="chat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <div class="slider-container">
+                        {% for media_url in page_data.get('slider_images', []) %}
+                            {% if is_video_url(media_url) %}
+                                {% if 'youtube.com' in media_url or 'youtu.be' in media_url %}
+                                    {% set video_id = media_url.split('v=')[1].split('&')[0] if 'v=' in media_url else media_url.split('/')[-1] %}
+                                    <iframe class="car-image slide {% if loop.first %}active{% endif %}" 
+                                            src="https://www.youtube.com/embed/{{ video_id }}?autoplay=0&mute=1&loop=1&playlist={{ video_id }}" 
+                                            frameborder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowfullscreen
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                    </iframe>
+                                {% elif 'vimeo.com' in media_url %}
+                                    {% set video_id = media_url.split('/')[-1] %}
+                                    <iframe class="car-image slide {% if loop.first %}active{% endif %}" 
+                                            src="https://player.vimeo.com/video/{{ video_id }}?autoplay=0&loop=1" 
+                                            frameborder="0" 
+                                            allow="autoplay; fullscreen; picture-in-picture" 
+                                            allowfullscreen
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                    </iframe>
+                                {% else %}
+                                    <video class="car-image slide {% if loop.first %}active{% endif %}" 
+                                           autoplay muted loop playsinline
+                                           style="width: 100%; height: 100%; object-fit: cover;">
+                                        <source src="{{ media_url }}" type="video/mp4">
+                                        <source src="{{ media_url }}" type="video/webm">
+                                        <source src="{{ media_url }}" type="video/ogg">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                {% endif %}
+                            {% else %}
+                                <img src="{{ media_url }}" alt="Slide {{ loop.index }}" class="car-image slide {% if loop.first %}active{% endif %}">
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <button class="slider-btn prev-btn" onclick="changeSlide(-1)">‹</button>
+                    <button class="slider-btn next-btn" onclick="changeSlide(1)">›</button>
+                    <div class="slider-dots">
+                        {% for img_url in page_data.get('slider_images', []) %}
+                            <span class="dot {% if loop.first %}active{% endif %}" onclick="currentSlide({{ loop.index }})"></span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </main>
+
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <h1>{{ page_data.get('title', 'METHODOLOGY') }}</h1>
+                <p class="lease-promo">{{ page_data.get('subtitle', 'Multi-layered approach combining sensing, processing, AI intelligence, interaction, and data security.') }}</p>
+
+                <div style="margin-top: 24px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1.1rem; color: #171a20; display: flex; align-items: center; gap: 8px;">
+                        <span>1️⃣</span> Vital Signs Measurement
+                    </h3>
+                    <div class="options" style="margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">❤️</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Heart Beat Rate</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Optical/IR sensors for continuous pulse monitoring</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🫁</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Oxygen Level (SpO₂)</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Non-invasive oximeter sensor provides accurate readings</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🌡️</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Temperature</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Thermal sensors measure body temperature in real time</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">⚖️</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Body Weight</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Load-cell based weighing module tracks weight instantly</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1.1rem; color: #171a20; display: flex; align-items: center; gap: 8px;">
+                        <span>2️⃣</span> Hardware Integration
+                    </h3>
+                    <div class="options" style="margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🖥️</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Monitor</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Displays vitals, chatbot responses, patient ID, and alerts</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">💻</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Processor</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">ESP32, Raspberry Pi, or Jetson Nano handles sensor data and AI tasks</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🤖</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Robotic Structure</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Modular frame with wheels/stand for easy deployment</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1.1rem; color: #171a20; display: flex; align-items: center; gap: 8px;">
+                        <span>3️⃣</span> AI & Software Intelligence
+                    </h3>
+                    <div class="options" style="margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🧠</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">AI Engine</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Processes inputs, performs triage, responds using medical datasets</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🎤</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Speech Recognition</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Converts patient speech into text for chatbot and data entry</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">👤</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Face Recognition</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Identifies patients automatically and retrieves medical history</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">💬</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Robot Interaction System</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Allows robot to talk, guide, and assist patients like a virtual nurse</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">📊</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Data Collection & Analytics</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Stores vitals and chatbot logs securely, enables pattern monitoring</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1.1rem; color: #171a20; display: flex; align-items: center; gap: 8px;">
+                        <span>4️⃣</span> Privacy & Security
+                    </h3>
+                    <div class="options" style="margin-bottom: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🔒</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Encrypted Storage</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Secure patient records with encryption</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🔐</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Secure Authentication</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Protected access for doctors/nurses only</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🛡️</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">No Data Leakage</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Prevents unauthorized access completely</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1.1rem; color: #171a20; display: flex; align-items: center; gap: 8px;">
+                        <span>5️⃣</span> Software Architecture
+                    </h3>
+                    <div class="options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">📡</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Sensor Data Acquisition</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Layer for collecting sensor data</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🤖</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">AI Conversation & Decision</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Intelligent decision-making layer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🖥️</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Dashboard Interface</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Monitor display interface</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">☁️</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Cloud/Local Storage</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Flexible storage system</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="option-box">
+                            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                <span style="font-size: 20px; flex-shrink: 0;">🔐</span>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; margin-bottom: 4px; font-weight: 600;">Secure Communication</h4>
+                                    <p style="font-size: 0.85rem; color: #5c5e62;">Protected communication modules</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="links-group" style="margin-top: 24px;">
+                    <a href="#" class="link">Learn More</a>
+                    <a href="#" class="link">Contact Us</a>
+                </div>
+
+                <p class="savings-note" style="margin-top: 16px;">{{ page_data.get('footer_note', 'Integrated multi-layered system for comprehensive healthcare assistance') }}</p>
+
+            </div>
+
+            <footer class="sidebar-footer">
+                <div class="footer-price">
+                    <p>Est. Financing</p>
+                    <strong>{{ page_data.get('financing', '$1500') }}</strong>
+                </div>
+                <button class="order-button">
+                    <span class="button-icon">📞</span>
+                    Investors are Invited
+                </button>
+            </footer>
+        </aside>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+
+        function showSlide(index) {
+            if (index >= slides.length) currentSlideIndex = 0;
+            if (index < 0) currentSlideIndex = slides.length - 1;
+            
+            // Pause all videos before switching
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+                const video = slide.querySelector('video');
+                if (video) {
+                    video.pause();
+                }
+            });
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[currentSlideIndex].classList.add('active');
+            dots[currentSlideIndex].classList.add('active');
+            
+            // Play video if current slide has one
+            const currentVideo = slides[currentSlideIndex].querySelector('video');
+            if (currentVideo) {
+                currentVideo.play().catch(e => console.log('Video autoplay prevented:', e));
+            }
+        }
+
+        function changeSlide(direction) {
+            currentSlideIndex += direction;
+            showSlide(currentSlideIndex);
+        }
+
+        function currentSlide(index) {
+            currentSlideIndex = index - 1;
+            showSlide(currentSlideIndex);
+        }
+
+        // Auto-play slider
+        {% if page_data.get('slider_images', [])|length > 1 %}
+        setInterval(() => {
+            currentSlideIndex++;
+            showSlide(currentSlideIndex);
+        }, 5000);
+        {% endif %}
+    </script>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}healthcare robot | Buxin{% endblock %}
+
+{% block content %}
+    <div class="page-wrapper">
+        <div class="container">
+            <main class="main-content">
+                <div class="image-slider">
+                    <button class="chat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                    <div class="slider-container">
+                        {% for media_url in page_data.get('slider_images', []) %}
+                            {% if is_video_url(media_url) %}
+                                {% if 'youtube.com' in media_url or 'youtu.be' in media_url %}
+                                    {% set video_id = media_url.split('v=')[1].split('&')[0] if 'v=' in media_url else media_url.split('/')[-1] %}
+                                    <iframe class="car-image slide {% if loop.first %}active{% endif %}" 
+                                            src="https://www.youtube.com/embed/{{ video_id }}?autoplay=0&mute=1&loop=1&playlist={{ video_id }}" 
+                                            frameborder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowfullscreen
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                    </iframe>
+                                {% elif 'vimeo.com' in media_url %}
+                                    {% set video_id = media_url.split('/')[-1] %}
+                                    <iframe class="car-image slide {% if loop.first %}active{% endif %}" 
+                                            src="https://player.vimeo.com/video/{{ video_id }}?autoplay=0&loop=1" 
+                                            frameborder="0" 
+                                            allow="autoplay; fullscreen; picture-in-picture" 
+                                            allowfullscreen
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                    </iframe>
+                                {% else %}
+                                    <video class="car-image slide {% if loop.first %}active{% endif %}" 
+                                           autoplay muted loop playsinline
+                                           style="width: 100%; height: 100%; object-fit: cover;">
+                                        <source src="{{ media_url }}" type="video/mp4">
+                                        <source src="{{ media_url }}" type="video/webm">
+                                        <source src="{{ media_url }}" type="video/ogg">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                {% endif %}
+                            {% else %}
+                                <img src="{{ media_url }}" alt="Slide {{ loop.index }}" class="car-image slide {% if loop.first %}active{% endif %}">
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <button class="slider-btn prev-btn" onclick="changeSlide(-1)">‹</button>
+                    <button class="slider-btn next-btn" onclick="changeSlide(1)">›</button>
+                    <div class="slider-dots">
+                        {% for img_url in page_data.get('slider_images', []) %}
+                            <span class="dot {% if loop.first %}active{% endif %}" onclick="currentSlide({{ loop.index }})"></span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </main>
+
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <h1>{{ page_data.get('title', 'Healthcare Robot') }}</h1>
+                <p class="lease-promo">{{ page_data.get('subtitle', 'AI-powered healthcare assistance for clinical and public use. <a href="#">Learn More</a>')|safe }}</p>
+
+                <div class="specs">
+                    {% for spec in page_data.get('specs', []) %}
+                    <div>
+                        <h2>{{ spec.get('value', '') }}<span class="unit">{{ spec.get('unit', '') }}</span></h2>
+                        <p>{{ spec.get('label', '') }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-link active">Clinical</button>
+                    <button class="tab-link">Public</button>
+                    <button class="tab-link">Schools</button>
+                </div>
+
+                <div class="options">
+                    <div class="option-box selected">
+                        <div>
+                            <h3>AI-Powered</h3>
+                            <p>Intelligent Communication</p>
+                        </div>
+                        <span class="price">Advanced</span>
+                    </div>
+                    <div class="option-box">
+                        <div>
+                            <h3>Real-Time</h3>
+                            <p>Health Monitoring</p>
+                        </div>
+                        <span class="price">Instant</span>
+                    </div>
+                    <div class="option-box">
+                        <div>
+                            <h3>Autonomous</h3>
+                            <p>Patient Engagement</p>
+                        </div>
+                        <span class="price">Smart</span>
+                    </div>
+                    <div class="option-box">
+                        <div>
+                            <h3>Affordable</h3>
+                            <p>Integrated Platform</p>
+                        </div>
+                        <span class="price">Accessible</span>
+                    </div>
+                </div>
+
+                <a href="#" class="link">View & Compare Features</a>
+
+                <div class="finance-details">
+                    <p>Faster screening, reduces staff burden | <a href="#">See Benefits</a></p>
+                </div>
+
+                <div class="links-group">
+                    <a href="#" class="link">Request Demo</a>
+                    <a href="#" class="link">Contact Us</a>
+                </div>
+
+                <p class="savings-note">{{ page_data.get('footer_note', 'Bridging gaps in healthcare with affordable, intelligent robotic assistance') }}</p>
+
+            </div>
+
+            <footer class="sidebar-footer">
+                <div class="footer-price">
+                    <p>Est. Financing</p>
+                    <strong>{{ page_data.get('financing', '$1500') }}</strong>
+                </div>
+                <button class="order-button">
+                    <span class="button-icon">📞</span>
+                    Investors are Invited
+                </button>
+            </footer>
+        </aside>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+
+        function showSlide(index) {
+            if (index >= slides.length) currentSlideIndex = 0;
+            if (index < 0) currentSlideIndex = slides.length - 1;
+            
+            // Pause all videos before switching
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+                const video = slide.querySelector('video');
+                if (video) {
+                    video.pause();
+                }
+            });
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slides[currentSlideIndex].classList.add('active');
+            dots[currentSlideIndex].classList.add('active');
+            
+            // Play video if current slide has one
+            const currentVideo = slides[currentSlideIndex].querySelector('video');
+            if (currentVideo) {
+                currentVideo.play().catch(e => console.log('Video autoplay prevented:', e));
+            }
+        }
+
+        function changeSlide(direction) {
+            currentSlideIndex += direction;
+            showSlide(currentSlideIndex);
+        }
+
+        function currentSlide(index) {
+            currentSlideIndex = index - 1;
+            showSlide(currentSlideIndex);
+        }
+
+        // Auto-play slider
+        {% if page_data.get('slider_images', [])|length > 1 %}
+        setInterval(() => {
+            currentSlideIndex++;
+            showSlide(currentSlideIndex);
+        }, 5000);
+        {% endif %}
+    </script>
+{% endblock %}

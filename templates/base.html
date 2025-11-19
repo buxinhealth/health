@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tesla{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">
+            {% if site_settings.logo_type == 'image' and site_settings.logo_image_url %}
+                <img src="{{ site_settings.logo_image_url }}" alt="{{ site_settings.site_name }}">
+            {% else %}
+                {{ site_settings.logo_text }}
+            {% endif %}
+        </div>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav class="nav-links" id="navLinks">
+            <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+            <a href="{{ url_for('problem') }}" class="nav-link">Problem</a>
+            <a href="{{ url_for('solution') }}" class="nav-link">Solution</a>
+           <!-- <a href="{{ url_for('methodology') }}" class="nav-link">Methodology</a> -->
+            <a href="{{ url_for('team') }}" class="nav-link">Team</a>
+            <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+        </nav>
+        <div class="language-selector">
+            <span class="globe-icon">🌐</span>
+            <span>US</span>
+        </div>
+    </header>
+    
+    {% block content %}{% endblock %}
+    
+    <!-- Investor Booking Modal -->
+    <div id="investorModal" class="investor-modal">
+        <div class="investor-modal-content">
+            <span class="investor-modal-close">&times;</span>
+            <h2>Schedule a Meeting</h2>
+            <form id="investorBookingForm">
+                <div class="form-group">
+                    <label for="full_name">Full Name *</label>
+                    <input type="text" id="full_name" name="full_name" required placeholder="Enter your full name">
+                    <div class="field-error" id="full_name_error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required placeholder="example@email.com">
+                    <div class="field-error" id="email_error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="e.g., +91 0000000000 or +220 0000000">
+                    <div class="field-error" id="phone_error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="country">Country *</label>
+                    <select id="country" name="country" required>
+                        <option value="">Select a country...</option>
+                    </select>
+                    <div class="field-error" id="country_error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="meeting_date">Meeting Date & Time *</label>
+                    <input type="datetime-local" id="meeting_date" name="meeting_date" required>
+                    <div class="field-error" id="meeting_date_error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="platform">Meeting Platform *</label>
+                    <select id="platform" name="platform" required>
+                        <option value="">Select a platform...</option>
+                        <option value="google_meet">Google Meet</option>
+                        <option value="zoom">Zoom</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="phone">Direct Phone Call</option>
+                    </select>
+                    <div class="field-error" id="platform_error"></div>
+                </div>
+                
+                <div id="formMessage" class="form-message"></div>
+                
+                <button type="submit" class="submit-btn">Submit Meeting Request</button>
+            </form>
+        </div>
+    </div>
+    
+    <style>
+        .investor-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .investor-modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .investor-modal-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+        }
+        
+        .investor-modal-close:hover {
+            color: #000;
+        }
+        
+        .investor-modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 24px;
+        }
+        
+        .investor-modal-content .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .investor-modal-content label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .investor-modal-content input,
+        .investor-modal-content select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        
+        .investor-modal-content input:focus,
+        .investor-modal-content select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .investor-modal-content .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        
+        .investor-modal-content .submit-btn:hover {
+            background: #5568d3;
+        }
+        
+        .investor-modal-content .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .form-message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .form-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .form-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .field-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            min-height: 18px;
+        }
+        
+        .field-error.show {
+            display: block;
+        }
+        
+        .investor-modal-content input.error,
+        .investor-modal-content select.error {
+            border-color: #dc3545;
+            background-color: #fff5f5;
+        }
+        
+        .investor-modal-content input:focus.error,
+        .investor-modal-content select:focus.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .investor-modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 20px;
+            }
+            
+            .investor-modal-content h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+    
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const menuToggle = document.querySelector('.menu-toggle');
+            navLinks.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        }
+        
+        // Investor Modal Scripts
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('investorModal');
+            const closeBtn = document.querySelector('.investor-modal-close');
+            const form = document.getElementById('investorBookingForm');
+            const messageDiv = document.getElementById('formMessage');
+            
+            // Load countries
+            fetch('/api/countries')
+                .then(response => response.json())
+                .then(countries => {
+                    const countrySelect = document.getElementById('country');
+                    countries.forEach(country => {
+                        const option = document.createElement('option');
+                        option.value = country;
+                        option.textContent = country;
+                        countrySelect.appendChild(option);
+                    });
+                });
+            
+            // Open modal when clicking investor buttons
+            document.querySelectorAll('.order-button').forEach(button => {
+                // Check if button contains "Investors are Invited" text (handles icon presence)
+                const buttonText = button.textContent.trim();
+                if (buttonText.includes('Investors are Invited')) {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        modal.style.display = 'block';
+                        document.body.style.overflow = 'hidden';
+                    });
+                }
+            });
+            
+            // Close modal
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                form.reset();
+                messageDiv.style.display = 'none';
+                clearFieldErrors();
+            });
+            
+            // Close when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    form.reset();
+                    messageDiv.style.display = 'none';
+                    clearFieldErrors();
+                }
+            });
+            
+            // Clear all field errors
+            function clearFieldErrors() {
+                document.querySelectorAll('.field-error').forEach(error => {
+                    error.classList.remove('show');
+                    error.textContent = '';
+                });
+                document.querySelectorAll('.investor-modal-content input, .investor-modal-content select').forEach(field => {
+                    field.classList.remove('error');
+                });
+            }
+            
+            // Show field error
+            function showFieldError(fieldId, message) {
+                const field = document.getElementById(fieldId);
+                const errorDiv = document.getElementById(fieldId + '_error');
+                if (field && errorDiv) {
+                    field.classList.add('error');
+                    errorDiv.textContent = message;
+                    errorDiv.classList.add('show');
+                }
+            }
+            
+            // Validate individual fields
+            function validateField(fieldId, value, validationFn, errorMessage) {
+                const field = document.getElementById(fieldId);
+                const errorDiv = document.getElementById(fieldId + '_error');
+                
+                if (!value || !validationFn(value)) {
+                    if (field) field.classList.add('error');
+                    if (errorDiv) {
+                        errorDiv.textContent = errorMessage;
+                        errorDiv.classList.add('show');
+                    }
+                    return false;
+                } else {
+                    if (field) field.classList.remove('error');
+                    if (errorDiv) {
+                        errorDiv.textContent = '';
+                        errorDiv.classList.remove('show');
+                    }
+                    return true;
+                }
+            }
+            
+            // Function to submit the form
+            function submitInvestorForm() {
+                const submitBtn = form.querySelector('.submit-btn');
+                
+                // Prevent double submission
+                if (submitBtn.disabled) {
+                    return;
+                }
+                
+                // Clear previous errors
+                clearFieldErrors();
+                messageDiv.style.display = 'none';
+                
+                // Get form values
+                const fullName = document.getElementById('full_name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const country = document.getElementById('country').value;
+                const meetingDate = document.getElementById('meeting_date').value;
+                const platform = document.getElementById('platform').value;
+                
+                // Validate all fields
+                let isValid = true;
+                
+                // Validate full name
+                if (!validateField('full_name', fullName, (val) => val.length >= 2, 'Please enter your full name (at least 2 characters)')) {
+                    isValid = false;
+                }
+                
+                // Validate email
+                const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!validateField('email', email, (val) => emailPattern.test(val), 'Please enter a valid email address (e.g., name@example.com)')) {
+                    isValid = false;
+                }
+                
+                // Validate phone
+                const phoneDigits = phone.replace(/[^\d+]/g, '');
+                if (!validateField('phone', phone, (val) => phoneDigits.length >= 7, 'Please enter a valid phone number (at least 7 digits, e.g., +220 7741187)')) {
+                    isValid = false;
+                }
+                
+                // Validate country
+                if (!validateField('country', country, (val) => val !== '', 'Please select your country')) {
+                    isValid = false;
+                }
+                
+                // Validate meeting date
+                if (!validateField('meeting_date', meetingDate, (val) => val !== '', 'Please select a meeting date and time')) {
+                    isValid = false;
+                } else {
+                    // Check if date is in the future
+                    const selectedDate = new Date(meetingDate);
+                    const now = new Date();
+                    if (selectedDate <= now) {
+                        showFieldError('meeting_date', 'Please select a future date and time');
+                        isValid = false;
+                    }
+                }
+                
+                // Validate platform
+                if (!validateField('platform', platform, (val) => val !== '', 'Please select a meeting platform')) {
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    messageDiv.className = 'form-message error';
+                    messageDiv.textContent = 'Please correct the errors above before submitting.';
+                    messageDiv.style.display = 'block';
+                    // Scroll to first error
+                    const firstError = document.querySelector('.field-error.show');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return;
+                }
+                
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+                
+                const formData = {
+                    full_name: fullName,
+                    email: email,
+                    phone: phone,
+                    country: country,
+                    meeting_date: meetingDate,
+                    platform: platform
+                };
+                
+                console.log('Submitting form data:', formData);
+                
+                fetch('/api/investor-booking', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json().then(data => {
+                        if (!response.ok) {
+                            throw new Error(data.error || 'Server error');
+                        }
+                        return data;
+                    });
+                })
+                .then(data => {
+                    if (data.success) {
+                        messageDiv.className = 'form-message success';
+                        messageDiv.textContent = data.message || 'Thank you! Your meeting request has been received.';
+                        form.reset();
+                        clearFieldErrors();
+                        
+                        // Close modal after 2 seconds
+                        setTimeout(() => {
+                            modal.style.display = 'none';
+                            document.body.style.overflow = 'auto';
+                            messageDiv.style.display = 'none';
+                        }, 2000);
+                    } else {
+                        // Handle server-side validation errors
+                        const errorMsg = data.error || 'An error occurred. Please try again.';
+                        
+                        // Try to map server errors to specific fields
+                        if (errorMsg.includes('full_name') || errorMsg.includes('name')) {
+                            showFieldError('full_name', errorMsg);
+                        } else if (errorMsg.includes('email')) {
+                            showFieldError('email', errorMsg);
+                        } else if (errorMsg.includes('phone')) {
+                            showFieldError('phone', errorMsg);
+                        } else if (errorMsg.includes('country')) {
+                            showFieldError('country', errorMsg);
+                        } else if (errorMsg.includes('meeting_date') || errorMsg.includes('date')) {
+                            showFieldError('meeting_date', errorMsg);
+                        } else if (errorMsg.includes('platform')) {
+                            showFieldError('platform', errorMsg);
+                        } else {
+                            messageDiv.className = 'form-message error';
+                            messageDiv.textContent = errorMsg;
+                            messageDiv.style.display = 'block';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    messageDiv.className = 'form-message error';
+                    messageDiv.textContent = error.message || 'Network error. Please check your connection and try again.';
+                    messageDiv.style.display = 'block';
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Meeting Request';
+                });
+            }
+            
+            // Form submission on submit event
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitInvestorForm();
+            });
+            
+            // Real-time validation on blur
+            document.getElementById('full_name').addEventListener('blur', function() {
+                const value = this.value.trim();
+                validateField('full_name', value, (val) => val.length >= 2, 'Please enter your full name (at least 2 characters)');
+            });
+            
+            document.getElementById('email').addEventListener('blur', function() {
+                const value = this.value.trim();
+                const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                validateField('email', value, (val) => emailPattern.test(val), 'Please enter a valid email address (e.g., name@example.com)');
+            });
+            
+            document.getElementById('phone').addEventListener('blur', function() {
+                const value = this.value.trim();
+                const phoneDigits = value.replace(/[^\d+]/g, '');
+                validateField('phone', value, (val) => phoneDigits.length >= 7, 'Please enter a valid phone number (at least 7 digits, e.g., +220 7741187)');
+            });
+            
+            document.getElementById('country').addEventListener('change', function() {
+                validateField('country', this.value, (val) => val !== '', 'Please select your country');
+            });
+            
+            document.getElementById('meeting_date').addEventListener('change', function() {
+                const value = this.value;
+                if (!value) {
+                    showFieldError('meeting_date', 'Please select a meeting date and time');
+                } else {
+                    const selectedDate = new Date(value);
+                    const now = new Date();
+                    if (selectedDate <= now) {
+                        showFieldError('meeting_date', 'Please select a future date and time');
+                    } else {
+                        validateField('meeting_date', value, (val) => val !== '', '');
+                    }
+                }
+            });
+            
+            document.getElementById('platform').addEventListener('change', function() {
+                validateField('platform', this.value, (val) => val !== '', 'Please select a meeting platform');
+            });
+            
+            // Handle Enter key press on all form inputs
+            const formInputs = form.querySelectorAll('input, select');
+            formInputs.forEach(input => {
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        // If it's the last field or a select, submit the form
+                        if (input === formInputs[formInputs.length - 1] || input.tagName === 'SELECT') {
+                            submitInvestorForm();
+                        } else {
+                            // Otherwise, focus on the next field
+                            const currentIndex = Array.from(formInputs).indexOf(input);
+                            if (currentIndex < formInputs.length - 1) {
+                                formInputs[currentIndex + 1].focus();
+                            } else {
+                                submitInvestorForm();
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Clear errors when user starts typing
+            formInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('error')) {
+                        const fieldId = this.id;
+                        const errorDiv = document.getElementById(fieldId + '_error');
+                        if (errorDiv) {
+                            errorDiv.classList.remove('show');
+                            errorDiv.textContent = '';
+                        }
+                        this.classList.remove('error');
+                    }
+                });
+            });
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+

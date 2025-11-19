@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Messages - Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .header h1 {
+            color: #333;
+            margin: 0;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .header a, .header button {
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .header a:hover, .header button:hover {
+            background: #667eea;
+            color: white;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-card h3 {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        .stat-card p {
+            color: #666;
+            font-size: 14px;
+        }
+        .messages-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .messages-table th,
+        .messages-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .messages-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        .messages-table tr:hover {
+            background: #f8f9fa;
+        }
+        .message-preview {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-close {
+            font-size: 28px;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .modal-close:hover {
+            color: #000;
+        }
+        .message-detail {
+            margin-bottom: 15px;
+        }
+        .message-detail strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .message-detail p {
+            color: #666;
+            line-height: 1.6;
+        }
+        @media (max-width: 768px) {
+            .messages-table {
+                font-size: 12px;
+            }
+            .messages-table th,
+            .messages-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                {% if site_settings.logo_type == 'image' and site_settings.logo_image_url %}
+                    <div class="logo">
+                        <img src="{{ site_settings.logo_image_url }}" alt="Logo" style="max-width: 120px; max-height: 50px;">
+                    </div>
+                {% else %}
+                    <div class="logo">
+                        <div class="logo-text" style="font-size: 20px; font-weight: 700; color: #667eea; letter-spacing: 1px;">{{ site_settings.logo_text }}</div>
+                    </div>
+                {% endif %}
+                <h1>Contact Messages</h1>
+            </div>
+            <div class="header-actions">
+                <a href="{{ url_for('admin_contact_info') }}">Edit Contact Info</a>
+                <a href="{{ url_for('admin_dashboard') }}">← Back to Dashboard</a>
+            </div>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="flash-{{ category }}" style="background: {% if category == 'success' %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if category == 'success' %}#155724{% else %}#721c24{% endif %}; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; list-style: none;">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>{{ messages|length }}</h3>
+                <p>Total Messages</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ messages|selectattr('status', 'equalto', 'new')|list|length }}</h3>
+                <p>New Messages</p>
+            </div>
+        </div>
+        
+        {% if messages %}
+        <table class="messages-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for msg in messages %}
+                <tr>
+                    <td><strong>{{ msg.full_name }}</strong></td>
+                    <td><a href="mailto:{{ msg.email }}">{{ msg.email }}</a></td>
+                    <td>{{ msg.subject }}</td>
+                    <td class="message-preview" title="{{ msg.message }}">{{ msg.message[:100] }}{% if msg.message|length > 100 %}...{% endif %}</td>
+                    <td>{{ msg.submitted_at[:10] }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-view" onclick="viewMessage('{{ msg.id }}')">View</button>
+                            <form method="POST" action="{{ url_for('admin_delete_contact_message', message_id=msg.id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this message?');">
+                                <button type="submit" class="btn btn-delete">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-data">
+            <p>No contact messages yet.</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Message View Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Message Details</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="messageContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        const messages = {{ messages|tojson }};
+        
+        function viewMessage(messageId) {
+            const message = messages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            const content = `
+                <div class="message-detail">
+                    <strong>Full Name:</strong>
+                    <p>${message.full_name}</p>
+                </div>
+                <div class="message-detail">
+                    <strong>Email:</strong>
+                    <p><a href="mailto:${message.email}">${message.email}</a></p>
+                </div>
+                <div class="message-detail">
+                    <strong>Subject:</strong>
+                    <p>${message.subject}</p>
+                </div>
+                <div class="message-detail">
+                    <strong>Date & Time:</strong>
+                    <p>${message.submitted_at}</p>
+                </div>
+                <div class="message-detail">
+                    <strong>Message:</strong>
+                    <p style="white-space: pre-wrap;">${message.message}</p>
+                </div>
+            `;
+            
+            document.getElementById('messageContent').innerHTML = content;
+            document.getElementById('messageModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('messageModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById('messageModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
+

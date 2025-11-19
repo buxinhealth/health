@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Email</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .logo img {
+            max-width: 120px;
+            max-height: 50px;
+        }
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            letter-spacing: 1px;
+        }
+        .header h1 { 
+            color: #333;
+            margin: 0;
+        }
+        .header a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .form-group textarea {
+            min-height: 300px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-group .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .submit-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background: #5568d3;
+        }
+        .flash-messages {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        .flash-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .flash-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+        .info-box h3 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                {% if site_settings.logo_type == 'image' and site_settings.logo_image_url %}
+                    <div class="logo">
+                        <img src="{{ site_settings.logo_image_url }}" alt="Logo">
+                    </div>
+                {% else %}
+                    <div class="logo">
+                        <div class="logo-text">{{ site_settings.logo_text }}</div>
+                    </div>
+                {% endif %}
+                <h1>Send Email</h1>
+            </div>
+            <a href="{{ url_for('admin_dashboard') }}">← Back to Dashboard</a>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="flash-{{ category }}">{{ message|safe }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        
+        <div class="info-box">
+            <h3>📧 Email Sending</h3>
+            <p>Use this form to send emails to users. The email will be sent using the Resend API. You can use HTML formatting in the email content.</p>
+            
+            <div style="margin-top: 15px; padding: 12px; background: {% if 'onboarding@resend.dev' in site_settings.get('from_email', 'onboarding@resend.dev') %}#fff3cd{% else %}#d1ecf1{% endif %}; border-left: 4px solid {% if 'onboarding@resend.dev' in site_settings.get('from_email', 'onboarding@resend.dev') %}#ffc107{% else %}#0c5460{% endif %}; border-radius: 4px;">
+                <p style="margin-bottom: 8px;"><strong>Current "From" Address:</strong> <code>{{ site_settings.get('from_email', 'onboarding@resend.dev') }}</code></p>
+                {% if 'onboarding@resend.dev' in site_settings.get('from_email', 'onboarding@resend.dev') %}
+                    <p style="color: #856404; margin: 0;"><strong>⚠️ Test Domain Active:</strong> You can only send emails to your own address (buxinhealth@gmail.com) with the test domain. <a href="{{ url_for('admin_settings') }}" style="color: #667eea; font-weight: bold;">Verify your domain →</a></p>
+                {% else %}
+                    <p style="color: #0c5460; margin: 0;"><strong>✓ Verified Domain:</strong> You can send emails to anyone using your verified domain!</p>
+                {% endif %}
+            </div>
+            
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ccc;">
+                <p style="margin-bottom: 10px;"><strong>📋 Important Notes:</strong></p>
+                <ul style="margin-left: 20px; color: #666; line-height: 1.8;">
+                    <li><strong>Domain Verification Required:</strong> To send emails to anyone (not just your own address), you must verify your domain at <a href="https://resend.com/domains" target="_blank" style="color: #667eea;">resend.com/domains</a></li>
+                    <li><strong>Update From Address:</strong> After verifying, update the "From Email" in <a href="{{ url_for('admin_settings') }}" style="color: #667eea;">Site Settings</a> to use your verified domain (e.g., noreply@yourdomain.com)</li>
+                    <li><strong>Check Resend Dashboard:</strong> Visit <a href="https://resend.com/emails" target="_blank" style="color: #667eea;">Resend Dashboard</a> to see delivery status, opens, and bounces.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.to_email.label }}
+                {{ form.to_email(class="form-control") }}
+                {% if form.to_email.errors %}
+                    <div class="help-text" style="color: #dc3545;">
+                        {% for error in form.to_email.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="help-text">Enter the recipient's email address</div>
+            </div>
+            
+            <div class="form-group">
+                {{ form.subject.label }}
+                {{ form.subject(class="form-control") }}
+                {% if form.subject.errors %}
+                    <div class="help-text" style="color: #dc3545;">
+                        {% for error in form.subject.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.html_content.label }}
+                {{ form.html_content(class="form-control") }}
+                {% if form.html_content.errors %}
+                    <div class="help-text" style="color: #dc3545;">
+                        {% for error in form.html_content.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="help-text">Enter HTML content for the email. Example: &lt;p&gt;Hello!&lt;/p&gt;</div>
+            </div>
+            
+            {{ form.submit(class="submit-btn") }}
+        </form>
+    </div>
+</body>
+</html>
+

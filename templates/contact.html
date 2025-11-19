@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}Contact | Tesla{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Basic Page Styles */
+    .contact-page-container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 3rem auto;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Header Section */
+    .contact-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .contact-header h1 {
+        font-size: 3rem;
+        color: #111;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-header p {
+        font-size: 1.15rem;
+        color: #555;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* Main Content Wrapper (2-column flexbox) */
+    .contact-content-wrapper {
+        display: flex;
+        flex-wrap: wrap; /* Allows columns to stack on mobile */
+        gap: 3rem;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        overflow: hidden; /* Contains the border-radius */
+    }
+
+    /* Column 1: Contact Form */
+    .contact-form-section {
+        flex: 2; /* Form takes 2/3 of the space */
+        padding: 2.5rem;
+        min-width: 300px; /* For responsiveness */
+    }
+
+    .contact-form-section h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #222;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Form Group (label + input) */
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Base styles for input and textarea */
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box; /* Important for padding */
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #CC0000;
+        box-shadow: 0 0 0 3px rgba(204, 0, 0, 0.1);
+    }
+
+    /* Validation Error Styling */
+    .form-control.is-invalid {
+        border-color: #d9534f;
+    }
+
+    .invalid-feedback {
+        color: #d9534f;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+        display: inline-block;
+        width: 100%;
+        padding: 0.85rem 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #ffffff;
+        background-color: #CC0000; /* Tesla Red */
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .submit-btn:hover {
+        background-color: #a60000;
+        transform: translateY(-2px);
+    }
+    
+    /* Column 2: Contact Info */
+    .contact-info-section {
+        flex: 1; /* Info takes 1/3 of the space */
+        background-color: #f9f9f9;
+        padding: 2.5rem;
+        min-width: 300px; /* For responsiveness */
+    }
+
+    .contact-info-section h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #222;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-details-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2rem 0;
+    }
+
+    .contact-details-list li {
+        display: flex;
+        align-items: flex-start;
+        font-size: 1.05rem;
+        color: #444;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .contact-details-list strong {
+        font-size: 1.5rem; /* Icon size */
+        margin-right: 1rem;
+        margin-top: -3px; /* Aligns icon with first line of text */
+        color: #CC0000;
+    }
+
+    .contact-details-list a {
+        text-decoration: none;
+        color: #CC0000;
+        font-weight: 500;
+    }
+
+    .contact-details-list a:hover {
+        text-decoration: underline;
+    }
+
+    /* Embedded Map */
+    .map-container {
+        border-radius: 12px;
+        overflow: hidden; /* Clips the iframe corners */
+        border: 1px solid #e0e0e0;
+        height: 300px;
+    }
+
+    /* Flash Messages for Success/Error */
+    .flash-messages {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .flash-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+
+    .flash-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        padding: 1rem;
+        border-radius: 8px;
+    }
+</style>
+
+<main class="contact-page-container">
+    <header class="contact-header">
+        <h1>Get in Touch</h1>
+        <p>Whether you have a question about our products, partnerships, or anything else, our team is ready to answer all your questions.</p>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flash-messages">
+            {% for category, message in messages %}
+                <li class="flash-{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <div class="contact-content-wrapper">
+        <section class="contact-form-section">
+            <h2>Send Us a Message</h2>
+            
+            <form id="contact-form" action="{{ url_for('contact') }}" method="POST" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.name.label }}
+                    {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                    {% for error in form.name.errors %}
+                        <span class="invalid-feedback">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                    {% for error in form.email.errors %}
+                        <span class="invalid-feedback">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.subject.label }}
+                    {{ form.subject(class="form-control" + (" is-invalid" if form.subject.errors else "")) }}
+                    {% for error in form.subject.errors %}
+                        <span class="invalid-feedback">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                
+                <div class="form-group">
+                    {{ form.message.label }}
+                    {{ form.message(class="form-control" + (" is-invalid" if form.message.errors else ""), rows=7) }}
+                    {% for error in form.message.errors %}
+                        <span class="invalid-feedback">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.submit(class="submit-btn") }}
+                </div>
+            </form>
+        </section>
+        <section class="contact-info-section">
+            <h2>Contact Information</h2>
+            <ul class="contact-details-list">
+                <li>
+                    <strong>📍</strong> <div>
+                        <strong>Address:</strong><br>
+                        {{ contact_info.address }}
+                    </div>
+                </li>
+                <li>
+                    <strong>📧</strong> <div>
+                        <strong>Email:</strong><br>
+                        <a href="mailto:{{ contact_info.email }}">{{ contact_info.email }}</a>
+                    </div>
+                </li>
+                <li>
+                    <strong>📞</strong> <div>
+                        <strong>Phone:</strong><br>
+                        <a href="tel:{{ contact_info.phone }}">{{ contact_info.phone }}</a>
+                    </div>
+                </li>
+            </ul>
+            <h2>Location</h2>
+            <div class="map-container">
+                <iframe 
+                    src="{{ contact_info.map_url }}" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </section>
+    </div>
+</main>
+
+{% endblock %}
