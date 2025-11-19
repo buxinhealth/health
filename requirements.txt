@@ -5,7 +5,7 @@ WTForms==3.1.1
 Werkzeug==3.0.1
 resend==2.0.0
 cloudinary==1.41.0
-psycopg[binary]==3.2.0
+psycopg[binary]==3.2.12
 python-dotenv==1.0.0
 gunicorn==21.2.0
 
