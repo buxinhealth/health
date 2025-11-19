@@ -2,6 +2,7 @@ services:
   - type: web
     name: health-techbuxin
     env: python
+    pythonVersion: 3.12.8
     region: oregon
     plan: starter
     buildCommand: pip install -r requirements.txt && python migrate.py
