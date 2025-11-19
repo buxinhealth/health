@@ -311,14 +311,61 @@ def admin_dashboard():
     site_settings = get_site_settings()
     return render_template('admin/dashboard.html', pages=pages, site_settings=site_settings)
 
+def get_default_page_data(page_name):
+    """Get default page data structure for a page that doesn't exist yet."""
+    defaults = {
+        'index': {
+            'title': 'Healthcare Robot',
+            'subtitle': 'AI-powered healthcare assistance for clinical and public use.',
+            'slider_images': [],
+            'footer_note': 'Bridging gaps in healthcare with affordable, intelligent robotic assistance',
+            'financing': '$1500'
+        },
+        'problem': {
+            'title': 'The Problem',
+            'subtitle': 'Understanding the challenges',
+            'description': '',
+            'slider_images': [],
+            'items': []
+        },
+        'solution': {
+            'title': 'The Solution',
+            'subtitle': 'How we solve it',
+            'description': '',
+            'slider_images': [],
+            'items': []
+        },
+        'methodology': {
+            'title': 'Methodology',
+            'subtitle': 'Our approach',
+            'description': '',
+            'slider_images': []
+        },
+        'team': {
+            'header_title': 'Our Team',
+            'header_description': 'Meet the people behind Healthcare Robot',
+            'members': []
+        }
+    }
+    return defaults.get(page_name, {})
+
 @app.route('/admin/edit/<page_name>', methods=['GET', 'POST'])
 @admin_required
 def admin_edit_page(page_name):
     """Edit a specific page."""
     site_settings = get_site_settings()
     
+    # Validate page name
+    valid_pages = ['index', 'problem', 'solution', 'methodology', 'team']
+    if page_name not in valid_pages:
+        flash('Invalid page name.', 'error')
+        return redirect(url_for('admin_dashboard'))
+    
     if request.method == 'POST':
         page_data = get_page_data(page_name)
+        # If page doesn't exist, use default structure
+        if not page_data:
+            page_data = get_default_page_data(page_name)
         
         if page_name == 'team':
             # Handle team page
@@ -350,7 +397,7 @@ def admin_edit_page(page_name):
             page_data['header_description'] = request.form.get('header_description', '')
         else:
             # Handle other pages
-            if 'slider_images' in page_data:
+            if 'slider_images' in page_data or page_name in ['index', 'problem', 'solution', 'methodology']:
                 slider_images = []
                 for i in range(10):
                     img_url = request.form.get(f'slider_image_{i}', '').strip()
@@ -362,7 +409,7 @@ def admin_edit_page(page_name):
                 if key in request.form:
                     page_data[key] = request.form.get(key, '')
             
-            if 'items' in page_data:
+            if 'items' in page_data or page_name in ['problem', 'solution']:
                 items = []
                 item_count = len([k for k in request.form.keys() if k.startswith('item_') and k.endswith('_title')])
                 for i in range(item_count):
@@ -378,10 +425,13 @@ def admin_edit_page(page_name):
         flash('Page updated successfully!', 'success')
         return redirect(url_for('admin_dashboard'))
     
+    # GET request - load page data or use defaults
     page_data = get_page_data(page_name)
     if not page_data:
-        flash('Page not found.', 'error')
-        return redirect(url_for('admin_dashboard'))
+        # Create default page data if it doesn't exist
+        page_data = get_default_page_data(page_name)
+        # Save it to database so it exists
+        save_page_data(page_name, page_data)
     
     return render_template(f'admin/edit_{page_name}.html', page_name=page_name, page_data=page_data, site_settings=site_settings)
 
